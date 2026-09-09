@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from django.shortcuts import render
 
-from main.models import Experience
+from main.models import Experience, Artwork
 
 
 def show_main(request):
@@ -25,3 +25,19 @@ def show_experience(request):
         "experience_list": Experience.objects.all(),
     }
     return render(request, "experience.html", context)
+
+def show_artworks(request):
+    context={
+        "name": "Faiz Kusumadinata",
+        "artworks_list": Artwork.objects.all(),
+    }
+    return render(request, "artworks.html", context)
+
+def show_art_details(request, id):
+    art_detail = get_object_or_404(Artwork, pk=id)
+    context = {
+        "name": "Faiz Kusumadinata",
+        "art_detail":art_detail,
+    }
+    return render(request, "art_details.html", context)
+    

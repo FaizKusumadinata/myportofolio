@@ -252,7 +252,7 @@ h1, .brand {
 }
 
 .section-kicker {
-    color: var(--accent-dark);
+    color: var(--ink);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -279,7 +279,7 @@ h1, .brand {
 }
 
 .experience-category {
-    color: var(--accent-dark);
+    color: var(--ink);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -292,11 +292,85 @@ h1, .brand {
 
 .experience-description,
 .empty-state {
-    color: var(--text-muted);
+    color: var(--ink);
 }
 
 .experience-status {
     margin-top: 1rem;
     font-size: 0.85rem;
     font-weight: 600;
+}
+
+/*ARTWORKS TEMPLATE CSS*/
+.artwork-brand-container{
+    border: 3px solid var(--ink);
+    border-radius: 5px;
+}
+
+.artwork-brand-letter{
+    text-align: center;
+    font-weight: 600;
+}
+
+.artwork-section{
+    padding:10px;
+    margin-left: 68px;
+}
+
+.artwork-grid{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+}
+
+.artwork-card{
+    margin-top:20px;
+    background-color: var(--paper);
+    color:var(--ink);
+    border: 3px solid var(--ink);
+    border-radius: 5px;
+    height:300px;
+    width:250px;
+}
+
+.artwork-card:hover{
+    background-color: var(--background-black);
+    color: var(--paper);
+    border: 3px solid var(--paper);
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.artwork-image{
+    border: 3px solid var(--ink);
+    margin:8px auto auto auto ;
+    height: 250px;
+    width:200px;
+}
+
+.image-display{
+    position: relative;
+    height:245px;
+    width:195px;
+}
+
+.artwork-title{
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.no-artworks{
+    margin:auto;
+    background-color: var(--background-black);
+    color: var(--paper);
+    border-color: var(--ink);
+    border-radius: 5px;
+    height:500px;
+    width:550px;
+    text-align: center;
+    font-size: 60px;
+    font-weight: 800;
+    padding-top:100px;
+    padding-bottom:100px;
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Artworks - {{name}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="#profile" class="brand">{{name}}</a>
+            <nav>
+                <a href="{% url 'main:show_main' %}">Profile</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
+                <a href="{% url 'main:show_artworks' %}">Artworks</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="artwork-brand">
+            <div class="artwork-brand-container">
+                <h1 class="artwork-brand-letter">ARTWORKS</h1>
+            </div>
+        </section>
+        <section class="artwork-section">
+            <div class="artwork-grid">
+                {%for artwork in artworks_list%}
+                    <div class="artwork-card">
+                        <div class= "artwork-image">
+                            <img class = "image-display"src="{{artwork.art_image}}" alt="{{artwork.title}}">
+                        </div>
+                        <div class="artwork-title">
+                            <p>{{artwork.title}}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="no-artworks">
+                        <p>No Artworks Submitted Yet.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 {{name}}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+        </div>
+    </footer>
+</body>
+</html>

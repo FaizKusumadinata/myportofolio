@@ -28,3 +28,14 @@ class Experience(models.Model):
         return self.ended_at is None
     
     
+class Artwork(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    art_image = models.URLField(blank=True, null=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.title
+    
+    
