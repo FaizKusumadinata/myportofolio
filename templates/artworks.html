@@ -25,6 +25,7 @@
         <section class="artwork-brand">
             <div class="artwork-brand-container">
                 <h1 class="artwork-brand-letter">ARTWORKS</h1>
+                <p class="artwork-brand-letter">Click The Title of The Art to Read The Descriptions!</p>
             </div>
         </section>
         <section class="artwork-section">
@@ -35,7 +36,7 @@
                             <img class = "image-display"src="{{artwork.art_image}}" alt="{{artwork.title}}">
                         </div>
                         <div class="artwork-title">
-                            <p>{{artwork.title}}</p>
+                            <p><a href="{%url 'main:show_art_details' artwork.id%}" class="artwork-title">{{artwork.title}}</a></p>
                         </div>
                     </div>
                 {% empty %}
