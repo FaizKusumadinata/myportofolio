@@ -1,6 +1,6 @@
 from django.forms import ModelForm, TextInput, Textarea, URLInput
 
-from main.models import Project
+from main.models import Project, Artwork
 
 class ProjectForm(ModelForm):
     class Meta:
@@ -49,4 +49,39 @@ class ProjectForm(ModelForm):
                     "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
                 }
             ),
+        }
+        
+class ArtworkForm(ModelForm):
+    class Meta:
+        model = Artwork
+        fields=[
+            "title",
+            "description",
+            "art-image"
+        ]
+        
+        labels={
+            "title":"nama gambar",
+            "description":"deskripsi gambar",
+            "art-image":"gambar"
+        }
+        
+        widgets={
+            "title": TextInput(
+                attrs={
+                    "placeholder": "Artwork Title",
+                    "maxlength": 255,
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    "placeholder": "Write a Description of Your Artwork",
+                    "rows": 5,
+                }
+            ),
+            "art-image": URLInput(
+                attrs={
+                    "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
+                }
+            )
         }
