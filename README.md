@@ -24,3 +24,14 @@ Dalam pengerjaan Tugas-1 PBP ini, saya tidak menggunakan AI. Sumber utama saya d
 
 AI Disclosure.
 Dalam pengerjaan Tugas-2 PBP ini, saya tidak menggunakan AI. Sumber utama saya dalam mempelajari materi untuk tugas ini adalah W3school.com, geeksforgeeks.org, dan StackOverflow.
+
+### tugas 3
+
+1. Penggunaan ModelForm akan mempermudah developer untuk menciptakan form yang sesuai dengan setiap atribut model tanpa perlu melakukannya murni dari awal. Adapun csrf token berfungsi untuk menghasilkan sebuah token unik untuk mencegah request ke halaman developer ditiru oleh pihak lain, sehingga melindungi data yang pengguna kirim ke website.
+
+2. Developer website lebih memilih JSON daripada XML karena JSON lebih efisien dan cepat dalam mengolah data. JSON juga lebih mudah untuk dibaca oleh manusia maupun komputer.
+
+3. Ketika JSON mengambil data melalui fungsi dari views.py, data yang diambil masih berada dalam bentuk mentah dan belum bisa dibaca oleh manusia, sehingga memerlukan proses serialization terlebih dahulu.
+
+AI Disclosure.
+Dalam pengerjaan Tugas-2 PBP ini, saya tidak menggunakan AI. Sumber utama saya dalam mempelajari materi untuk tugas ini adalah W3school.com, geeksforgeeks.org, dan StackOverflow.

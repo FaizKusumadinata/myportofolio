@@ -34,6 +34,7 @@ class Artwork(models.Model):
     description = models.TextField()
     art_image = models.URLField(blank=True, null=True)
     date_posted = models.DateTimeField(auto_now_add=True)
+    tags = models.CharField(max_length=255, null=True)
     
     def __str__(self):
         return self.title

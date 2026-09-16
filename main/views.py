@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.contrib import messages
 from main.models import Experience, Artwork, Project
-from main.forms import ProjectForm
+from main.forms import ProjectForm, ArtworkForm
 
 
 def show_main(request):
@@ -27,9 +27,19 @@ def show_experience(request):
     return render(request, "experience.html", context)
 
 def show_artworks(request):
-    context={
+    json_response = get_artworks_json(request)
+    
+    artworks = serializers.deserialize(
+        "json",
+        json_response.content.decode("utf-8"),
+    )
+    artworks = [artwork.object for artwork in artworks]
+    tags_query = request.GET.get("tags", "").strip()
+
+    context = {
         "name": "Faiz Kusumadinata",
-        "artworks_list": Artwork.objects.all(),
+        "artworks_list": artworks,
+        "tags_query": tags_query,
     }
     return render(request, "artworks.html", context)
 
@@ -82,6 +92,20 @@ def get_projects_json(request):
     projects_json = serializers.serialize("json", projects)
     return HttpResponse(projects_json, content_type="application/json")
     
+def create_project(request):
+    form = ProjectForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Proyek baru berhasil ditambahkan!")
+        return redirect("main:show_projects")
+
+    context = {
+        "name": "Burhan",
+        "form": form,
+    }
+    return render(request, "projects_form.html", context)
+
 def delete_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
@@ -91,3 +115,48 @@ def delete_project(request, project_id):
         return redirect("main:show_projects")
 
     return redirect("main:show_projects")
+
+def delete_artwork(request, artwork_id):
+    artwork = get_object_or_404(Artwork, pk=artwork_id)
+    if request.method == "POST":
+        artwork.delete()
+        messages.success(request, "Artwork Successfully Deleted")
+        return redirect("main:show_artworks")
+
+    return redirect("main:show_artworks")
+
+def create_artwork(request):
+    form = ArtworkForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Artwork Has Been Submitted")
+        return redirect("main:show_artworks")
+
+    context = {
+        "name": "Faiz Kusumadinata",
+        "form": form,
+    }
+    return render(request, "artwork_form.html", context)
+
+def get_artworks_json(request):
+    title_query = request.GET.get("title", "").strip()
+    artworks = Artwork.objects.all()
+
+    if title_query:
+        artworks = artworks.filter(title__icontains=title_query)
+
+    artworks_json = serializers.serialize("json", artworks)
+    return HttpResponse(artworks_json, content_type="application/json")
+
+def update_artwork(request, artwork_id):
+    artwork = get_object_or_404(Artwork, pk=artwork_id)
+    form = ArtworkForm(request.POST or None, instance=artwork)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_artworks')
+    context = {
+        'form': form
+    }
+
+    return render(request, "artwork_update.html", context)

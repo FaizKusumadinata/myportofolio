@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Art Details - {{name}}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
+{% block meta %}
+    <title>Art Details - {{ art_detail.title }}</title>
+{% endblock meta %}
 {% block content %}
         <main>
         <section class="art-detail-section">
@@ -19,16 +11,17 @@
                 <div class="detail-grid">
                     <h1 class="art-detail-title">{{art_detail.title}}</h1>
                     <p class="art-detail-date">Posted On: {{art_detail.date_posted}}</p>
+                    <p class="art-detail-date">Tags: {{art_detail.tags}}</p>
                     <p class="art-detail-description">{{art_detail.description}}</p>
                 </div>
                 <div class = "art-grid">
                     <img class="art-detail-image" src="{{art_detail.art_image}}">
                 </div>
-
+                <div class="delete-update-grid">
+                    <a href="{% url 'main:update_artwork' art_detail.id %}"class="submit-artwork-button">Update Artwork</a>
+                    {% include "components/artwork_delete_modal.html" with art_detail=art_detail %}
+                </div>
             </div>
         </section>
-
     </main>
 {% endblock content %}
-</body>
-</html>

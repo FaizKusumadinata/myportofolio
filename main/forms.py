@@ -57,13 +57,15 @@ class ArtworkForm(ModelForm):
         fields=[
             "title",
             "description",
-            "art-image"
+            "tags",
+            "art_image"
         ]
         
         labels={
-            "title":"nama gambar",
-            "description":"deskripsi gambar",
-            "art-image":"gambar"
+            "title":"Title",
+            "description":"Description",
+            "tags": "Tags",
+            "art_image":"Artwork",
         }
         
         widgets={
@@ -79,7 +81,13 @@ class ArtworkForm(ModelForm):
                     "rows": 5,
                 }
             ),
-            "art-image": URLInput(
+            "tags": TextInput(
+              attrs={
+                  "placeholder": "Artwork Tags",
+                  "max_length":255,
+              }  
+            ),
+            "art_image": URLInput(
                 attrs={
                     "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
                 }

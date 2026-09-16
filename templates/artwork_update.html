@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% block meta %}
-    <title>Submit Artwork - {{ name }}</title>
+    <title>Update Artwork - {{ form.title }}</title>
 {% endblock meta %}
 {% block content %}
     <main>
         <section class="experience-section">
             <div class="container">
-                <h1 style="text-align:center;">Submit Artwork</h1>
+                <h1 style="text-align:center;">Update Artwork</h1>
                 <form method="post"
-                      action="{% url 'main:create_artwork' %}"
                       class="project-form">
                     {% csrf_token %}
                     {% for field in form %}
@@ -20,8 +19,8 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="button">Submit Artwork</button>
-                    <a href="{% url 'main:show_artworks' %}" class="button button-secondary">Cancel</a>
+                    <button type="submit" class="button">Update Artwork</button>
+                    <a href="{% url 'main:show_artworks'%}" class="button button-secondary">Cancel</a>
                 </form>
             </div>
         </section>

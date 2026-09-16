@@ -11,7 +11,7 @@
     --accent: #d95d39;
     --accent-dark: #a8442a;
     --text-muted: #6b6459;
-    --background-black:#292827;
+    --background-black:#474746;
     --gray: #c0bdbd;
     --radius: 4px;
 }
@@ -46,7 +46,7 @@ h1, .brand {
 }
 
 .site-header {
-    background-color: var(--background-black);
+    background-color: var(--ink);
     border-bottom: 1px solid var(--line);
 }
 
@@ -187,7 +187,7 @@ h1, .brand {
 .site-footer {
     padding: 1.5rem;
     color: var(--paper);
-    background-color: var(--background-black);
+    background-color: var(--ink);
     font-size: 0.95rem;
     border-top: 1px solid var(--line);
 }
@@ -374,7 +374,7 @@ h1, .brand {
 
 .no-artworks{
     margin:auto;
-    background-color: var(--background-black);
+    background-color: var(--ink);
     color: var(--paper);
     border-color: var(--ink);
     border-radius: 5px;
@@ -395,7 +395,8 @@ h1, .brand {
     grid-template-columns: 0.3fr 1fr;
     grid-template-areas:
         "image art-details"
-        "image art-desc";
+        "image art-desc"
+        "image delete-update";
     gap: 0rem 0rem;
 
 }
@@ -455,7 +456,7 @@ h1, .brand {
     width: 100%;
     box-sizing: border-box;
     padding: 0.7rem;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--ink);
     border-radius: var(--radius);
     font: inherit;
     transition:
@@ -465,8 +466,8 @@ h1, .brand {
 
 .form-group input:focus,
 .form-group textarea:focus {
-    outline: 2px solid var(--accent);
-    border-color: var(--accent);
+    outline: 2px solid var(--ink);
+    border-color: var(--ink);
 }
 
 .form-error {
@@ -481,12 +482,16 @@ h1, .brand {
     border: 0;
     border-radius: var(--radius);
     padding: 0.65rem 1rem;
-    background: var(--accent);
+    background: var(--ink);
     color: white;
     cursor: pointer;
     font: inherit;
     font-weight: 700;
     text-decoration: none;
+}
+
+.button:hover{
+    background: var(--background-black);
 }
 
 .button-secondary {
@@ -554,8 +559,8 @@ h1, .brand {
 }
 
 .project-search__input:focus {
-    outline: 2px solid var(--accent);
-    border-color: var(--accent);
+    outline: 2px solid var(--ink);
+    border-color: var(--ink);
 }
 
 .project-actions {
@@ -700,3 +705,41 @@ h1, .brand {
         text-align: center;
     }
 }
+
+.submit-artwork-container{
+    display: inline-flex;
+    align-items: center;
+    color:var(--paper);
+
+}
+.submit-artwork-button{
+    border: 3px solid var(--ink);
+    border-radius:5px;
+    padding:3px;
+}
+.submit-artwork-button:link{
+    font-size: medium;
+    font-weight: 600;
+    text-decoration: none;
+    background-color: var(--ink);
+    color: var(--paper);
+}
+
+.submit-artwork-button:hover{
+    background-color: var(--background-black);
+    transition: background-color 0.2s ease;
+}
+
+.submit-artwork-button:visited{
+    color:var(--paper);
+}
+
+.delete-update-grid {
+    grid-area:delete-update;
+    margin-left:250px;
+    margin-bottom:20px;
+}
+
+
+
+

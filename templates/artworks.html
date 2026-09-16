@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Artworks - {{name}}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
+{% block meta %}
+    <title>Artworks - {{ name }}</title>
+{% endblock meta %}
 {% block content %}
         <main>
         <section class="artwork-brand">
@@ -20,6 +12,17 @@
             </div>
         </section>
         <section class="artwork-section">
+            <form method="get"
+                      action="{% url 'main:show_artworks' %}"
+                      class="project-search">
+                    <input type="search"
+                           name="tags"
+                           value="{{ title_query }}"
+                           placeholder="Search an Art with it's Title"
+                           class="project-search__input"
+                           aria-label="Cari berdasarkan nama proyek">
+                    <button type="submit" class="button">Search</button>
+                </form>
             <div class="artwork-grid">
                 {%for artwork in artworks_list%}
                     <div class="artwork-card">
@@ -31,17 +34,20 @@
                         </div>
                     </div>
                 {% empty %}
-                    <div class="no-artworks">
-                        <p>No Artworks Submitted Yet.</p>
-                    </div>
+                    {% if title_query %}
+                        <div class="no-artworks">
+                        <p>No Artwork With Such Title Were Found</p>
+                        </div>
+                    {% else %}
+                        <div class="no-artworks">
+                        <p>No Artworks Submitted Yet</p>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
             <div class="submit-artwork-container">
-
+                <a href="{% url 'main:create_artwork' %}"class="submit-artwork-button">Submit Artwork</a>
             </div>
         </section>
-
     </main>
 {% endblock content %}
-</body>
-</html>
