@@ -45,9 +45,11 @@
                     {% endif %}
                 {% endfor %}
             </div>
+            {% if user.is_superuser %}
             <div class="submit-artwork-container">
                 <a href="{% url 'main:create_artwork' %}"class="submit-artwork-button">Submit Artwork</a>
             </div>
+            {% endif %}
         </section>
     </main>
 {% endblock content %}
