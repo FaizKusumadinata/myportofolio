@@ -79,8 +79,8 @@ def show_projects(request):
     json_response = get_projects_json(request)
 
     projects = serializers.deserialize(
-        "json", projects, use_natural_foreign_keys=True
         json_response.content.decode("utf-8"),
+        "json", projects, use_natural_foreign_keys=True   
     )
     projects = [project.object for project in projects]
     title_query = request.GET.get("title", "").strip()
