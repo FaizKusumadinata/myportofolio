@@ -11,6 +11,7 @@
                     <h1 class="art-detail-title">{{art_detail.title}}</h1>
                     <p class="art-detail-date">Posted On: {{art_detail.date_posted}}</p>
                     <p class="art-detail-date">Tags: {{art_detail.tags}}</p>
+                    {% include "components/artwork_star.html" with art_detail=art_detail %}
                     <p class="art-detail-description">{{art_detail.description}}</p>
                 </div>
                 <div class = "art-grid">
