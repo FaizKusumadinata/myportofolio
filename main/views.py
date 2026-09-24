@@ -79,8 +79,9 @@ def show_projects(request):
     json_response = get_projects_json(request)
 
     projects = serializers.deserialize(
+        "json",
         json_response.content.decode("utf-8"),
-        "json", projects, use_natural_foreign_keys=True   
+        use_natural_foreign_keys=True   
     )
     projects = [project.object for project in projects]
     title_query = request.GET.get("title", "").strip()
@@ -213,3 +214,18 @@ def toggle_star(request, project_id):
             project.starred_by.add(request.user)
 
     return redirect("main:show_projects")
+
+@login_required(login_url="/login/")
+def toggle_star_artwork(request, id):
+    art = get_object_or_404(Artwork, pk=id)
+
+    if request.method == "POST":
+        # Kalau akun ini sudah pernah memberi star, batalkan star-nya.
+        # Kalau belum, tambahkan star.
+        if request.user in art.starred_by.all():
+            art.starred_by.remove(request.user)
+        else:
+            art.starred_by.add(request.user)
+
+    return redirect("main:show_artworks")
+

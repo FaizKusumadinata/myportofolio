@@ -36,6 +36,9 @@ class Artwork(models.Model):
     art_image = models.URLField(blank=True, null=True)
     date_posted = models.DateTimeField(auto_now_add=True)
     tags = models.CharField(max_length=255, null=True)
+    starred_by = models.ManyToManyField(
+            User, related_name="starred_artworks", blank=True
+        )
     
     def __str__(self):
         return self.title
