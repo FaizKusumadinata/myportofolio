@@ -19,7 +19,7 @@ def show_main(request):
         "study_program": "S1 Ilmu Komputer",
         "bio": (
             "Computer Science student at Universitas Indonesia. Born on November 6th, 2006 in the city of Pontianak, West Borneo."
-                        "I am interested in art and writing. I also love to spend my time reading novels or drawing."
+                        " I am interested in art and writing. I also love to spend my time reading novels or drawing."
         ),
         "last_login":last_login
     }
@@ -228,4 +228,6 @@ def toggle_star_artwork(request, id):
             art.starred_by.add(request.user)
 
     return redirect("main:show_artworks")
+
+
 
