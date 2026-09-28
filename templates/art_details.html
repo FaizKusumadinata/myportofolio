@@ -17,10 +17,12 @@
                 <div class = "art-grid">
                     <img class="art-detail-image" src="{{art_detail.art_image}}">
                 </div>
-                {% if user.is_superuser %}
+                {% if user.is_superuser or  perms.main.change_artwork %}
                 <div class="delete-update-grid">
                     <a href="{% url 'main:update_artwork' art_detail.id %}"class="submit-artwork-button">Update Artwork</a>
+                    {% if user.is_superuser %}
                     {% include "components/artwork_delete_modal.html" with art_detail=art_detail %}
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>
