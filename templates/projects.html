@@ -14,12 +14,12 @@
                     </button>
                     <h1>Projects</h1>
                     {% if user.is_superuser %}
-                    <a href="{% url 'main:create_project' %}"
+                    <button type="button"
                        class="button project-add-button"
                        popovertarget="add-project-modal">
                         <span aria-hidden="true">+</span>
                         Tambah Proyek
-                    </a>
+                    </button>
                     {% endif %}
                 </div>
                 <form method="get"
@@ -268,6 +268,9 @@
 
     if (projectForm) {
         projectForm.addEventListener('submit', addProject);
+    }
+    function closeProjectModal() {
+    document.getElementById("add-project-modal").hidePopover();
     }
     // Start application
     fetchProjects(searchInput.value.trim());

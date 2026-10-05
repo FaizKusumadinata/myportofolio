@@ -35,20 +35,14 @@ def show_experience(request):
     return render(request, "experience.html", context)
 
 def show_artworks(request):
-    json_response = get_artworks_json(request)
+    title_query = request.GET.get("title", "").strip()
     
-    artworks = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    artworks = [artwork.object for artwork in artworks]
-    tags_query = request.GET.get("tags", "").strip()
-
     context = {
-        "name": "Faiz Kusumadinata",
-        "artworks_list": artworks,
-        "tags_query": tags_query,
+        "name":"Faiz Kusumadinata",
+        "title_query":title_query,
+        "form":ArtworkForm(),
     }
+    
     return render(request, "artworks.html", context)
 
 def show_art_details(request, id):
@@ -95,13 +89,13 @@ def create_project_ajax(request):
 
     return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
+
 def show_projects(request):
     title_query = request.GET.get("title", "").strip()
 
     context = {
         "name": "Faiz Kusumadinata",
         "title_query": title_query,
-        "form": ProjectForm(),
     }
     return render(request, "projects.html", context)
 
@@ -173,15 +167,51 @@ def create_artwork(request):
     }
     return render(request, "artwork_form.html", context)
 
+@require_POST
+def create_artwork_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Only The Master can Submit His Artwork."},
+            status=403,
+        )
+
+    form = ArtworkForm(request.POST)
+    if form.is_valid():
+        artwork = form.save()
+        return JsonResponse(
+            {"message": "Proyek berhasil ditambahkan.", "pk": str(artwork.id)},
+            status=201,
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
 def get_artworks_json(request):
     title_query = request.GET.get("title", "").strip()
-    artworks = Artwork.objects.all()
-
+    artworks = Artwork.objects.prefetch_related('starred_by').all()
+    
     if title_query:
-        artworks = artworks.filter(title__icontains=title_query)
-
-    artworks_json = serializers.serialize("json", artworks)
-    return HttpResponse(artworks_json, content_type="application/json")
+        artworks = artworks.filter(title_icontains=title_query)
+        
+    art = []
+    for artwork in artworks:
+        starred_users = artwork.starred_by.all()
+        is_starred = request.user in starred_users if request.user.is_authenticated else False
+        starred_by_names = ", ".join([u.username for u in starred_users])
+    
+        art.append({
+            "pk" : str(artwork.id),
+            "fields":{
+                "title":artwork.title,
+                "description":artwork.description,
+                "art_image":artwork.art_image,
+                "tags":artwork.tags,
+                "star_count":starred_users.count(),
+                "is_starred":is_starred,
+                "starred_by_names":starred_by_names,
+                "details":"/art_details/"+str(artwork.id),
+            }
+        })
+    return JsonResponse(art, safe=False)
 
 @login_required(login_url="/login/")
 def update_artwork(request, artwork_id):

@@ -14,42 +14,209 @@
         <section class="artwork-section">
             <form method="get"
                       action="{% url 'main:show_artworks' %}"
-                      class="project-search">
+                      class="project-search"
+                      id="artwork-search-form">
                     <input type="search"
-                           name="tags"
+                           name="title"
                            value="{{ title_query }}"
                            placeholder="Search an Art with it's Title"
                            class="project-search__input"
-                           aria-label="Cari berdasarkan nama proyek">
+                           aria-label="Cari berdasarkan nama proyek"
+                           id="search-input">
                     <button type="submit" class="button">Search</button>
                 </form>
-            <div class="artwork-grid">
-                {%for artwork in artworks_list%}
-                    <div class="artwork-card">
-                        <div class= "artwork-image">
-                            <img class = "image-display"src="{{artwork.art_image}}" alt="{{artwork.title}}">
-                        </div>
-                        <div class="artwork-title">
-                            <p><a href="{%url 'main:show_art_details' artwork.id%}" class="artwork-title">{{artwork.title}}</a></p>
-                        </div>
-                    </div>
-                {% empty %}
-                    {% if title_query %}
-                        <div class="no-artworks">
-                        <p>No Artwork With Such Title Were Found</p>
-                        </div>
-                    {% else %}
-                        <div class="no-artworks">
-                        <p>No Artworks Submitted Yet</p>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            {% if user.is_superuser %}
-            <div class="submit-artwork-container">
-                <a href="{% url 'main:create_artwork' %}"class="submit-artwork-button">Submit Artwork</a>
-            </div>
-            {% endif %}
+            <div id="loading" class="empty-state hide">
+                    <p>Loading Artworks...</p>
+                </div>
+
+                <div id="error" class="empty-state hide">
+                    <p>Failed to Load Artworks. Please Try Again.</p>
+                </div>
+
+                <div id="empty" class="empty-state hide">
+                    <p>No Artwork Submitted Yet.</p>
+                </div>
+
+                <div id="grid" class="experience-grid artwork-grid hide"></div>
+
+                {% if user.is_superuser %}
+                <button type="button"
+                    class="button project-add-button"
+                    popovertarget="add-artwork-modal">
+                    <span aria-hidden="true">+</span>
+                    Submit Artwork
+                </button>
+                {% endif %}
         </section>
     </main>
+    {% if user.is_superuser %}
+        {% include "components/artwork_form_modal.html" %}
+    {% endif %}
+    <script >
+        const BASE_ARTWORKS_ENDPOINT = "{% url 'main:get_artworks_json' %}";
+        const IS_SUPERUSER = "{{user.is_superuser|yesno:'true,false'}}" === false;
+        let artworksAbortController;
+
+        const loadingState = document.getElementById('loading');
+        const errorState = document.getElementById('error');
+        const emptyState = document.getElementById('empty');
+        const gridContainer = document.getElementById('grid');
+        const searchForm = document.getElementById('artwork-search-form');
+        const searchInput = document.getElementById('search-input');
+
+        const SEARCH_DEBOUNCE_DELAY = 300;
+        let searchDebounceTimer;
+
+        function displayPageSection({showLoading = false, showError = false, showGrid = false, showEmpty = false}){
+            loadingState.classList.toggle('hide', !showLoading);
+            errorState.classList.toggle('hide', !showError);
+            emptyState.classList.toggle('hide', !showEmpty);
+            gridContainer.classList.toggle('hide', !showGrid);
+        }
+
+         function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function buildArtworkCardElement(item){
+            const art = item.fields;
+            const artworkID = item.pk;
+
+            const sectionElement = document.createElement('div');
+            sectionElement.className = 'artwork-card';
+
+            const completeCardHtml = `
+                <div class= "artwork-image">
+                    <img src="${escapeHtml(art.art_image)}" class= "image-display">
+                </div>
+                <div class="artwork-title">
+                    <a href="${escapeHtml(art.details)}" class="artwork-title">${escapeHtml(art.title)}</a>
+                </div>`;
+
+            sectionElement.innerHTML = completeCardHtml;
+            return sectionElement;
+        }
+
+        function closeProjectModal() {
+            document.getElementById("add-artwork-modal").hidePopover();
+        }
+
+            const CREATE_ARTWORK_ENDPOINT = "{% url 'main:create_artwork_ajax' %}";
+            const artworkForm = document.getElementById('artwork-form');
+
+            
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            
+            async function addArtwork(event) {
+                event.preventDefault();
+
+                const submitButton = artworkForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+
+                try {
+                    const response = await fetch(CREATE_ARTWORK_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                        body: new FormData(artworkForm),
+                    });
+                    const result = await response.json().catch(() => ({}));
+
+                    if (response.ok) {
+                        artworkForm.reset();
+                        closeProjectModal();
+                        showToast('Success', 'Artwork Successfully submitted', 'success');
+                        fetchProjects(searchInput.value.trim());
+                    } else {
+                        const errorMessages = result.errors
+                            ? Object.values(result.errors).flat().map(error => error.message)
+                            : [result.message || `An Error has occured (status ${response.status}).`];
+                        showToast('Failed to submit Artwork', errorMessages.join(' '), 'error');
+                    }
+                } catch (error) {
+                    console.error('Error Submitting Artwork:', error);
+                    showToast('Failed to submit artwork', 'Cannot connect to server, please try again', 'error');
+                } finally {
+                    submitButton.disabled = false;
+                }
+            }
+
+            if (artworkForm) {
+                artworkForm.addEventListener('submit', addArtwork);
+            }
+
+        async function fetchArtworks(searchQuery = ""){
+            if(artworksAbortController) artworksAbortController.abort();
+            artworksAbortController = new AbortController();
+
+            try{
+                displayPageSection({showLoading:true});
+
+                const url = searchQuery ? `${BASE_ARTWORKS_ENDPOINT}?title=${encodeURIComponent(searchQuery)}` : BASE_ARTWORKS_ENDPOINT;
+                const response = await fetch(url, {
+                    headers: { 'Accept': 'application/json' },
+                    signal: artworksAbortController.signal,
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch data');
+
+                const artworkData = await response.json();
+
+                if(artworkData.length==0){
+                    displayPageSection({showEmpty:true});
+                }
+                else{
+                    gridContainer.innerHTML = '';
+                    artworkData.forEach(item => {
+                        gridContainer.appendChild(buildArtworkCardElement(item))
+                    });
+                    displayPageSection({showGrid:true});
+                }
+            }
+            catch (error){
+                if(error.name === 'AbortError') return;
+                console.error('Error loading projects', error);
+                displayPageSection({showError:true});
+            }
+        }
+
+        function searchProjects() {
+            fetchProjects(searchInput.value.trim());
+        }
+
+        searchInput.addEventListener("input", function() {
+            clearTimeout(searchDebounceTimer);
+
+            searchDebounceTimer = setTimeout(function() {
+                searchProjects();
+            }, SEARCH_DEBOUNCE_DELAY);
+        });
+
+        searchForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            clearTimeout(searchDebounceTimer);
+            searchProjects();
+        });
+
+        fetchArtworks(searchInput.value.trim());
+    </script>
+
 {% endblock content %}

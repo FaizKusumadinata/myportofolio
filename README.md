@@ -39,3 +39,17 @@ Dalam pengerjaan Tugas-2 PBP ini, saya tidak menggunakan AI. Sumber utama saya d
 ### tugas 4
 AI Disclosure.
 Dalam pengerjaan Tugas-2 PBP ini, saya tidak menggunakan AI. Sumber utama saya dalam mempelajari materi untuk tugas ini adalah W3school.com, geeksforgeeks.org, dan StackOverflow.
+
+### tugas 5
+1. Debouncing adalah teknik menghentikan sebuah fungsi untuk sementara hingga dapat dipastikan tidak ada event baru. Debouncing berguna untuk mencegah fungsi terus menerus berjalan selama user meng-input data untuk search AJAX.
+
+2. await berfungsi untuk menahan kinerja sebuah fungsi async yang sedang berjalan tanpa memengaruhi javascript. Ketika menggunakan fetch() tanpa await, maka API akan mendapatkan sebuah promise, bukan Response HTTP.
+
+3. XSS(Cross Site Scripting) adalah serangan ke script client-side sebuah web. Penyerang dapat mengambil data klien, membajak akun, me-redirect klien ke situs lain, dan bahkan mengirim malware. Javascript/AJAX lebih rentan terhadap serangan ini daripada template Django karena kurangnya fitur keamanan built-in.
+
+AI Disclosure.
+Dalam pengerjaan Tugas-2 PBP ini, saya tidak menggunakan AI. Sumber utama saya dalam mempelajari materi untuk tugas ini adalah W3school.com, geeksforgeeks.org, dan modul PBP yang disediakan di Scele.
+
+Non-Admin Accounts and Passwords:
+1. BatmanFan1939 : jonkler@74
+2. stephen_king : tommyknockers8
