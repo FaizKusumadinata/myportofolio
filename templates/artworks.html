@@ -198,22 +198,22 @@
             }
         }
 
-        function searchProjects() {
-            fetchProjects(searchInput.value.trim());
+        function searchArtworks() {
+            fetchArtworks(searchInput.value.trim());
         }
 
         searchInput.addEventListener("input", function() {
             clearTimeout(searchDebounceTimer);
 
             searchDebounceTimer = setTimeout(function() {
-                searchProjects();
+                searchArtworks();
             }, SEARCH_DEBOUNCE_DELAY);
         });
 
         searchForm.addEventListener("submit", function(event) {
             event.preventDefault();
             clearTimeout(searchDebounceTimer);
-            searchProjects();
+            searchArtworks();
         });
 
         fetchArtworks(searchInput.value.trim());
