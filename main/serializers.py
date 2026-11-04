@@ -1,7 +1,7 @@
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from main.models import Project
+from main.models import Project, Artwork
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -41,3 +41,37 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def get_starred_by_names(self, obj):
         return ", ".join(user.username for user in obj.starred_by.all())
+    
+class ArtworkSerializer(serializers.ModelSerializer):
+    star_count = serializers.SerializerMethodField()
+    is_starred = serializers.SerializerMethodField()
+    starred_by = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Artwork
+        fields = ["id", "title", "description", "art_image", "date_posted", "tags", "star_count", "is_starred", "starred_by"]
+        read_only_fields = ["id"]
+        
+    def validate_title(self, value):
+        value = strip_tags(value).strip()
+        if not value:
+            raise serializers.ValidationError("Title is Empty")
+        return value
+
+    def validate_description(self, value):
+        return strip_tags(value)
+    
+    def validate_tags(self, value):
+        return strip_tags(value)
+    
+    def get_star_count(self, object):
+        return object.starred_by.count()
+
+    def get_is_starred(self, object):
+        request = self.context.get("request")
+        if request is None or not request.user.is_authenticated:
+            return False
+        return request.user in object.starred_by.all()
+    
+    def get_starred_by(self, object):
+        return ", ".join(user.username for user in object.starred_by.all())

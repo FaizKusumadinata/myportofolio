@@ -55,11 +55,13 @@ Non-Admin Accounts and Passwords:
 2. stephen_king : tommyknockers8
 
 ### tugas 6
-1. REST merupakan singkatan dari Representational State Transfer dan merupakan sebuah gaya arsitektur dalam merancang API sebuah web yang mengutamakan agar website menjadi RESTful.
+1. REST merupakan singkatan dari Representational State Transfer dan merupakan sebuah gaya arsitektur dalam merancang API sebuah web yang mengutamakan agar website menjadi RESTful. JSON saja belum cukup karena JSON yang dikembalikan dapat menjadi tidak terstruktur. Penggunaan RESTful API membantu JSON menjadi lebih terstruktur. Adapun perbedaan antara request PUT dan PATCH adalah PUT dapat menggantikan dan mengubah data secara keseluruhan, sedangkan PATCH hanya mengubah bagian-bagian tertentu saja dari data.
 
-2. 
+2. Serializer pada Django REST Framework berfungsi mengubah data Python ke bentuk JSON. Serializer ini memiliki keuntungan dibandingkan merakit dictionary secara manual pada JSONResponse karena serialzernya akan secara otomatis mengecek model Django yang digunakan untuk membuat field yang sesuai, sehingga developer tidak perlu membuat lagi dictionary field secara manual.
 
-3. 
+3. Dalam Django REST Framework, Autentikasi adalah proses mengidentifikasi pengguna untuk kemudian dicek menggunakan permissions untuk menentukan otorisasi pengguna yang merupakan hak aksesnya terkait data dalam website.
+
+4. Session Authentication tidak mencegah CSRF pada request-request cross-origin karena browser mengirimkan request-request tersebut dengang cookienya masing-masing.
 
 AI Disclosure.
 Dalam pengerjaan Tugas-2 PBP ini, saya tidak menggunakan AI. Sumber utama saya dalam mempelajari materi untuk tugas ini adalah W3school.com, geeksforgeeks.org, dan modul PBP yang disediakan di Scele.
