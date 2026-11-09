@@ -74,11 +74,11 @@ def project_star(request, project_id):
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def artwork_list(request):
     if request.method == ("GET", "HEAD"):
-        artwork = Artwork.objects.prefetch_related("starred_by").order_by("title", "id")
+        artwork = Artwork.objects.all()#prefetch_related("starred_by").order_by("title", "id")
         art_title = request.query_params.get("title", "").strip()
         if art_title:
-            artwork = artwork.filter(title__icontains=art_title)
-        serializer = ArtworkSerializer(artwork, many=True, context={"request":request})
+            artwork = artwork.objects.all() #filter(title__icontains=art_title)
+        serializer = ArtworkSerializer(Artwork, many=True)#, context={"request":request})
         return Response(serializer.data)
     
     serializer = ArtworkSerializer(data=request.data, context={"request":request})

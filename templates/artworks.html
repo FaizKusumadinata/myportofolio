@@ -55,7 +55,7 @@
 
     {% csrf_token %}
     <script >
-        const BASE_ARTWORKS_ENDPOINT = "{% url 'api:artwork-list' %}";
+        const BASE_ARTWORK_ENDPOINT = "{% url 'api:artwork-list' %}";
         const DETAIL_ARTWORKS_ENDPOINT = "{% url 'api:artwork-details' '00000000-0000-0000-0000-000000000000' %}";
         const STAR_ARTWORKS_ENDPOINT = "{% url 'api:artwork-star' '00000000-0000-0000-0000-000000000000' %}";
         const IS_SUPERUSER = "{{user.is_superuser|yesno:'true,false'}}" === false;
@@ -98,7 +98,7 @@
 
             const image = item.art_image ? `<img src="${escapeHtml(item.art_image)}" class= "image-display">` : '';
 
-            const title = item.title ? `<a href="${escapeHtml(item.title)}" class="artwork-title">${escapeHtml(art.title)}</a>`: '';
+            const title = item.title ? `<a href="${escapeHtml(item.detail)}" class="artwork-title">${escapeHtml(art.title)}</a>`: '';
 
             const completeCardHtml = `
                 <div class= "artwork-image">
@@ -163,7 +163,8 @@
             try{
                 displayPageSection({showLoading:true});
 
-                const url = new URL(BASE_ARTWORKS_ENDPOINT, window.location.origin);
+                const url = new URL(BASE_ARTWORK_ENDPOINT, window.location.origin);
+                if (searchQuery) url.searchParams.set('title', searchQuery);
                 const response = await fetch(url, {
                     headers: { 'Accept': 'application/json' },
                     signal: artworksAbortController.signal,
