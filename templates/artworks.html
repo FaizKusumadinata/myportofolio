@@ -56,8 +56,6 @@
     {% csrf_token %}
     <script >
         const BASE_ARTWORK_ENDPOINT = "{% url 'api:artwork-list' %}";
-        const DETAIL_ARTWORK_ENDPOINT = "{% url 'api:project-detail' '00000000-0000-0000-0000-000000000000' %}";
-        const STAR_ARTWORK_ENDPOINT = "{% url 'api:project-star' '00000000-0000-0000-0000-000000000000' %}";
         const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
         const IS_AUTHENTICATED = "{{ user.is_authenticated|yesno:'true,false' }}" === "true";
 
