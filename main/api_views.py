@@ -74,11 +74,11 @@ def project_star(request, project_id):
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def artwork_list(request):
     if request.method == ("GET", "HEAD"):
-        artwork = Artwork.objects.all()#prefetch_related("starred_by").order_by("title", "id")
+        artwork = Artwork.objects.all()
         art_title = request.query_params.get("title", "").strip()
         if art_title:
-            artwork = artwork.objects.all() #filter(title__icontains=art_title)
-        serializer = ArtworkSerializer(Artwork, many=True)#, context={"request":request})
+            artwork = artwork.filter(title__icontains=art_title)
+        serializer = ArtworkSerializer(artwork, many=True, context={"request":request})
         return Response(serializer.data)
     
     serializer = ArtworkSerializer(data=request.data, context={"request":request})
@@ -97,7 +97,7 @@ def art_details(request, art_id):
     
     if request.method == "DELETE":
         artwork.delete()
-        return Response(stauts=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     serializer = ArtworkSerializer(artwork, data=request.data, partial=request.method=="PATCH", context={"request":request})
     serializer.save()

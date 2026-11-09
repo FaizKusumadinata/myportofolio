@@ -32,6 +32,7 @@ main {
     border-radius: var(--radius);
     margin-left: 10%;
     margin-right: 10%;
+    min-height: 451px;
 }
 
 

@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from main.models import Project
+from main.models import Project, Artwork
 
 
 class ProjectAPITest(APITestCase):
@@ -16,6 +16,9 @@ class ProjectAPITest(APITestCase):
         self.visitor = User.objects.create_user(username="visitor", password="test-password")
         self.project = Project.objects.create(
             title="Portfolio", description="My website", tech_stack="Django",
+        )
+        self.artwork = Artwork.objects.create(
+            title="TestArt", description="This is a test model", tags="test-drawing",
         )
         self.list_url = reverse("api:project-list")
         self.detail_url = reverse("api:project-detail", args=[self.project.id])

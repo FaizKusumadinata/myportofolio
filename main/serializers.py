@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from main.models import Project, Artwork
 
-
 class ProjectSerializer(serializers.ModelSerializer):
     star_count = serializers.SerializerMethodField()
     is_starred = serializers.SerializerMethodField()
@@ -42,14 +41,15 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_starred_by_names(self, obj):
         return ", ".join(user.username for user in obj.starred_by.all())
     
+    
 class ArtworkSerializer(serializers.ModelSerializer):
     star_count = serializers.SerializerMethodField()
     is_starred = serializers.SerializerMethodField()
-    starred_by = serializers.SerializerMethodField()
+    starred_by_names = serializers.SerializerMethodField()
     
     class Meta:
         model = Artwork
-        fields = ["id", "title", "description", "art_image", "date_posted", "tags", "star_count", "is_starred", "starred_by"]
+        fields = ["id", "title", "description", "art_image", "date_posted", "tags", "star_count", "is_starred", "starred_by_names"]
         read_only_fields = ["id"]
         
     def validate_title(self, value):
@@ -73,5 +73,5 @@ class ArtworkSerializer(serializers.ModelSerializer):
             return False
         return request.user in object.starred_by.all()
     
-    def get_starred_by(self, object):
+    def get_starred_by_names(self, object):
         return ", ".join(user.username for user in object.starred_by.all())

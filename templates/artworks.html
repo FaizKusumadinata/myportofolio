@@ -56,30 +56,29 @@
     {% csrf_token %}
     <script >
         const BASE_ARTWORK_ENDPOINT = "{% url 'api:artwork-list' %}";
-        const DETAIL_ARTWORKS_ENDPOINT = "{% url 'api:artwork-details' '00000000-0000-0000-0000-000000000000' %}";
-        const STAR_ARTWORKS_ENDPOINT = "{% url 'api:artwork-star' '00000000-0000-0000-0000-000000000000' %}";
-        const IS_SUPERUSER = "{{user.is_superuser|yesno:'true,false'}}" === false;
+        const DETAIL_ARTWORK_ENDPOINT = "{% url 'api:project-detail' '00000000-0000-0000-0000-000000000000' %}";
+        const STAR_ARTWORK_ENDPOINT = "{% url 'api:project-star' '00000000-0000-0000-0000-000000000000' %}";
+        const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
         const IS_AUTHENTICATED = "{{ user.is_authenticated|yesno:'true,false' }}" === "true";
-        let artworksAbortController;
 
         const loadingState = document.getElementById('loading');
         const errorState = document.getElementById('error');
         const emptyState = document.getElementById('empty');
         const gridContainer = document.getElementById('grid');
-        const searchForm = document.getElementById('artwork-search-form');
+        const searchForm = document.getElementById('project-search-form');
         const searchInput = document.getElementById('search-input');
-
-        const SEARCH_DEBOUNCE_DELAY = 300;
+        const artworkForm = document.getElementById('project-form');
+        let artworksAbortController;
         let searchDebounceTimer;
 
-        function displayPageSection({showLoading = false, showError = false, showGrid = false, showEmpty = false}){
-            loadingState.classList.toggle('hide', !showLoading);
-            errorState.classList.toggle('hide', !showError);
-            emptyState.classList.toggle('hide', !showEmpty);
-            gridContainer.classList.toggle('hide', !showGrid);
+        function getCookie(name) {
+            const prefix = `${name}=`;
+            const cookie = document.cookie.split(';').map(value => value.trim())
+                .find(value => value.startsWith(prefix));
+            return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : null;
         }
 
-         function escapeHtml(value) {
+        function escapeHtml(value) {
             return String(value ?? '').replaceAll('&', '&amp;')
                 .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
                 .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
@@ -89,16 +88,22 @@
             return pattern.replace('00000000-0000-0000-0000-000000000000', id);
         }
 
+        function displayPageSection({ showLoading = false, showError = false,
+            showEmpty = false, showGrid = false }) {
+            loadingState.classList.toggle('hide', !showLoading);
+            errorState.classList.toggle('hide', !showError);
+            emptyState.classList.toggle('hide', !showEmpty);
+            gridContainer.classList.toggle('hide', !showGrid);
+        }
+
         function buildArtworkCardElement(item){
-            const art = item.fields;
-            const artworkID = item.pk;
 
             const sectionElement = document.createElement('div');
             sectionElement.className = 'artwork-card';
 
             const image = item.art_image ? `<img src="${escapeHtml(item.art_image)}" class= "image-display">` : '';
 
-            const title = item.title ? `<a href="${escapeHtml(item.detail)}" class="artwork-title">${escapeHtml(art.title)}</a>`: '';
+            const title = item.title ? `<a href="${escapeHtml(item.detail)}" class="artwork-title">${escapeHtml(item.title)}</a>`: '';
 
             const completeCardHtml = `
                 <div class= "artwork-image">
@@ -112,76 +117,25 @@
             return sectionElement;
         }
 
-        function closeProjectModal() {
-            document.getElementById("add-artwork-modal").hidePopover();
-        }
-
-            const CREATE_ARTWORK_ENDPOINT = "{% url 'main:create_artwork_ajax' %}";
-            const artworkForm = document.getElementById('artwork-form');
-
-            
-            function getCookie(name) {
-                const prefix = `${name}=`;
-                const cookie = document.cookie.split(';').map(value => value.trim())
-                    .find(value => value.startsWith(prefix));
-                return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : null;
-            }
-
-            
-            async function addArtwork(event) {
-                event.preventDefault();
-
-                const submitButton = artworkForm.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-
-                try {
-                    const fields = new FormData(artworkForm);
-                    const payload = Object.fromEntries([
-                    'title', 'description', 'art_image', 'tags', 'date_posted'
-                    ].map(name => [name, fields.get(name)]));
-                    await writeArtwork(BASE_ARTWORK_ENDPOINT, 'POST', payload);
-                    artworkForm.reset();
-                    document.getElementById('add-artwork-modal').hidePopover();
-                    showToast('Success', 'Artwork Submitted.', 'success');
-                    await fetchArtwork(searchInput.value.trim());
-                } catch (error) {
-                    console.error('Error Submitting Artwork:', error);
-                    showToast('Failed to submit artwork', 'Cannot connect to server, please try again', 'error');
-                } finally {
-                    submitButton.disabled = false;
-                }
-            }
-
-            if (artworkForm) {
-                artworkForm.addEventListener('submit', addArtwork);
-            }
-
-        async function fetchArtworks(searchQuery = ""){
-            if(artworksAbortController) artworksAbortController.abort();
+        async function fetchArtworks(searchQuery = '') {
+            if (artworksAbortController) artworksAbortController.abort();
             artworksAbortController = new AbortController();
-
-            try{
-                displayPageSection({showLoading:true});
-
+            try {
+                displayPageSection({ showLoading: true });
                 const url = new URL(BASE_ARTWORK_ENDPOINT, window.location.origin);
                 if (searchQuery) url.searchParams.set('title', searchQuery);
                 const response = await fetch(url, {
-                    headers: { 'Accept': 'application/json' },
+                    headers: { Accept: 'application/json' },
                     signal: artworksAbortController.signal,
                 });
-
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
                 const artworkData = await response.json();
-
                 gridContainer.replaceChildren(...artworkData.map(buildArtworkCardElement));
                 displayPageSection({ showGrid: artworkData.length > 0, showEmpty: artworkData.length === 0 });
-                }
-
-            catch (error){
-                if(error.name === 'AbortError') return;
-                console.error('Error loading artworks', error);
-                displayPageSection({showError:true});
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                console.error(error);
+                displayPageSection({ showError: true });
             }
         }
 
@@ -206,24 +160,33 @@
             return data;
         }
 
-        function searchArtworks() {
-            fetchArtworks(searchInput.value.trim());
+        async function addArtwork(event) {
+            event.preventDefault();
+            const button = artworkForm.querySelector('button[type="submit"]');
+            button.disabled = true;
+            try {
+                const fields = new FormData(artworkForm);
+                const payload = Object.fromEntries([
+                    'title', 'description', 'art_image', 'tags'
+                ].map(name => [name, fields.get(name)]));
+                await writeArtwork(BASE_ARTWORK_ENDPOINT, 'POST', payload);
+                artworkForm.reset();
+                document.getElementById('add-artwork-modal').hidePopover();
+                showToast('Success', 'Artwork Submitted.', 'success');
+                await fetchArtworks(searchInput.value.trim());
+            } catch (error) {
+                showToast('Could Not Submit Artwork', error.message, 'error');
+            } finally {
+                button.disabled = false;
+            }
         }
 
-        searchInput.addEventListener("input", function() {
+        if (artworkForm) artworkForm.addEventListener('submit', addArtwork);
+
+        searchInput.addEventListener('input', function() {
             clearTimeout(searchDebounceTimer);
-
-            searchDebounceTimer = setTimeout(function() {
-                searchArtworks();
-            }, SEARCH_DEBOUNCE_DELAY);
+            searchDebounceTimer = setTimeout(() => fetchArtwork(searchInput.value.trim()), 300);
         });
-
-        searchForm.addEventListener("submit", function(event) {
-            event.preventDefault();
-            clearTimeout(searchDebounceTimer);
-            searchArtworks();
-        });
-
         fetchArtworks(searchInput.value.trim());
     </script>
 
